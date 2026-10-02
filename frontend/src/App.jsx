@@ -2,7 +2,7 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <h1 className="text-4xl font-bold text-blue-900">
-        Guest House Booking System
+        Guest House Booking Systems
       </h1>
     </div>
   );
