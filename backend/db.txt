@@ -1,0 +1,816 @@
+-- =========================================================
+-- KALIKA HOTEL & LODGE - HOTEL BOOKING SYSTEM
+-- MySQL 8.0.16+
+-- =========================================================
+
+CREATE DATABASE IF NOT EXISTS kalika_hotel
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
+
+USE kalika_hotel;
+
+
+-- =========================================================
+-- 1. USERS
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS users (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL UNIQUE,
+    phone VARCHAR(20) NULL,
+
+    password_hash VARCHAR(255) NOT NULL,
+
+    role ENUM('SUPER_ADMIN', 'ADMIN', 'STAFF') NOT NULL,
+    status ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
+
+    last_login_at DATETIME NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_users_role (role),
+    INDEX idx_users_status (status)
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 2. REFRESH TOKENS
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS refresh_tokens (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    user_id INT UNSIGNED NOT NULL,
+
+    token_hash CHAR(64) NOT NULL UNIQUE,
+
+    expires_at DATETIME NOT NULL,
+    revoked_at DATETIME NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_refresh_tokens_user (user_id),
+    INDEX idx_refresh_tokens_expires (expires_at),
+
+    CONSTRAINT fk_refresh_tokens_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 3. ROOM CATEGORIES
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS room_categories (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    name VARCHAR(100) NOT NULL,
+    slug VARCHAR(120) NOT NULL UNIQUE,
+
+    description TEXT NULL,
+
+    base_price DECIMAL(10,2) NOT NULL,
+
+    max_adults INT UNSIGNED NOT NULL DEFAULT 1,
+    max_children INT UNSIGNED NOT NULL DEFAULT 0,
+
+    bed_type VARCHAR(50) NULL,
+    size_sqft INT UNSIGNED NULL,
+
+    amenities JSON NULL,
+
+    status ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_room_categories_status (status),
+
+    CONSTRAINT chk_category_price CHECK (base_price >= 0),
+    CONSTRAINT chk_category_adults CHECK (max_adults >= 1),
+    CONSTRAINT chk_category_children CHECK (max_children >= 0),
+    CONSTRAINT chk_category_size CHECK (size_sqft IS NULL OR size_sqft > 0)
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 4. ROOMS
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS rooms (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    room_category_id INT UNSIGNED NOT NULL,
+
+    room_number VARCHAR(20) NOT NULL UNIQUE,
+
+    floor VARCHAR(50) NULL,
+    description TEXT NULL,
+
+    status ENUM('AVAILABLE', 'MAINTENANCE', 'INACTIVE')
+        NOT NULL DEFAULT 'AVAILABLE',
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_rooms_category (room_category_id),
+    INDEX idx_rooms_status (status),
+
+    CONSTRAINT fk_rooms_category
+        FOREIGN KEY (room_category_id)
+        REFERENCES room_categories(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 5a. ROOM MEDIA  (FIXED: split from the old combined table;
+--     the old XOR CHECK is illegal on FK-cascade columns)
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS room_media (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    room_id INT UNSIGNED NOT NULL,
+
+    media_type ENUM('IMAGE', 'VIDEO') NOT NULL,
+
+    media_url VARCHAR(500) NOT NULL,
+    thumbnail_url VARCHAR(500) NULL,
+
+    title VARCHAR(150) NULL,
+
+    is_primary BOOLEAN NOT NULL DEFAULT FALSE,
+
+    display_order INT UNSIGNED NOT NULL DEFAULT 0,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_media_room (room_id, display_order),
+
+    CONSTRAINT fk_media_room
+        FOREIGN KEY (room_id)
+        REFERENCES rooms(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 5b. CATEGORY MEDIA
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS category_media (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    category_id INT UNSIGNED NOT NULL,
+
+    media_type ENUM('IMAGE', 'VIDEO') NOT NULL,
+
+    media_url VARCHAR(500) NOT NULL,
+    thumbnail_url VARCHAR(500) NULL,
+
+    title VARCHAR(150) NULL,
+
+    is_primary BOOLEAN NOT NULL DEFAULT FALSE,
+
+    display_order INT UNSIGNED NOT NULL DEFAULT 0,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_category_media (category_id, display_order),
+
+    CONSTRAINT fk_category_media_category
+        FOREIGN KEY (category_id)
+        REFERENCES room_categories(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 6. CUSTOMERS
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS customers (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    full_name VARCHAR(150) NOT NULL,
+
+    email VARCHAR(150) NULL,
+    phone VARCHAR(30) NULL,
+
+    password_hash VARCHAR(255) NULL,
+
+    account_status ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
+
+    address VARCHAR(255) NULL,
+
+    id_type ENUM('CITIZENSHIP', 'PASSPORT', 'DRIVING_LICENSE', 'OTHER') NULL,
+    id_number VARCHAR(100) NULL,
+
+    last_login_at DATETIME NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    -- Unique email only for customers who have an account
+    login_email VARCHAR(150)
+        GENERATED ALWAYS AS (
+            CASE
+                WHEN password_hash IS NOT NULL THEN email
+                ELSE NULL
+            END
+        ) STORED,
+
+    UNIQUE KEY uq_customers_login_email (login_email),
+
+    INDEX idx_customers_email (email),
+    INDEX idx_customers_phone (phone),
+    INDEX idx_customers_status (account_status)
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 7. CUSTOMER REFRESH TOKENS
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS customer_refresh_tokens (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    customer_id INT UNSIGNED NOT NULL,
+
+    token_hash CHAR(64) NOT NULL UNIQUE,
+
+    expires_at DATETIME NOT NULL,
+    revoked_at DATETIME NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_customer_refresh_tokens_customer (customer_id),
+    INDEX idx_customer_refresh_tokens_expires (expires_at),
+
+    CONSTRAINT fk_customer_refresh_tokens_customer
+        FOREIGN KEY (customer_id)
+        REFERENCES customers(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 8. BOOKINGS
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS bookings (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    booking_code VARCHAR(30) NOT NULL UNIQUE,
+
+    customer_id INT UNSIGNED NOT NULL,
+
+    booking_source ENUM('ONLINE', 'OFFLINE') NOT NULL,
+
+    check_in DATETIME NOT NULL,
+    check_out DATETIME NOT NULL,
+
+    adults INT UNSIGNED NOT NULL DEFAULT 1,
+    children INT UNSIGNED NOT NULL DEFAULT 0,
+
+    status ENUM(
+        'PENDING',
+        'CONFIRMED',
+        'CHECKED_IN',
+        'CHECKED_OUT',
+        'CANCELLED',
+        'NO_SHOW'
+    ) NOT NULL DEFAULT 'PENDING',
+
+    special_request TEXT NULL,
+
+    subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+    discount DECIMAL(10,2) NOT NULL DEFAULT 0,
+    service_charge DECIMAL(10,2) NOT NULL DEFAULT 0,
+    tax DECIMAL(10,2) NOT NULL DEFAULT 0,
+    total_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+
+    expires_at DATETIME NULL,
+
+    checked_in_at DATETIME NULL,
+    checked_out_at DATETIME NULL,
+
+    cancelled_at DATETIME NULL,
+    cancellation_reason VARCHAR(255) NULL,
+
+    cancelled_by INT UNSIGNED NULL,
+    created_by INT UNSIGNED NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_bookings_customer (customer_id, check_in),
+    INDEX idx_bookings_status_dates (status, check_in, check_out),
+    INDEX idx_bookings_expires (status, expires_at),
+    INDEX idx_bookings_created_at (created_at),
+    INDEX idx_bookings_created_by (created_by),
+    INDEX idx_bookings_cancelled_by (cancelled_by),
+
+    CONSTRAINT chk_booking_dates CHECK (check_out > check_in),
+    CONSTRAINT chk_booking_adults CHECK (adults >= 1),
+    CONSTRAINT chk_booking_children CHECK (children >= 0),
+
+    CONSTRAINT chk_booking_amounts
+        CHECK (
+            subtotal >= 0
+            AND discount >= 0
+            AND service_charge >= 0
+            AND tax >= 0
+            AND total_amount >= 0
+        ),
+
+    CONSTRAINT fk_bookings_customer
+        FOREIGN KEY (customer_id)
+        REFERENCES customers(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_bookings_created_by
+        FOREIGN KEY (created_by)
+        REFERENCES users(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_bookings_cancelled_by
+        FOREIGN KEY (cancelled_by)
+        REFERENCES users(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 9. BOOKING STATUS HISTORY
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS booking_status_history (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    booking_id BIGINT UNSIGNED NOT NULL,
+
+    old_status ENUM(
+        'PENDING',
+        'CONFIRMED',
+        'CHECKED_IN',
+        'CHECKED_OUT',
+        'CANCELLED',
+        'NO_SHOW'
+    ) NULL,
+
+    new_status ENUM(
+        'PENDING',
+        'CONFIRMED',
+        'CHECKED_IN',
+        'CHECKED_OUT',
+        'CANCELLED',
+        'NO_SHOW'
+    ) NOT NULL,
+
+    changed_by INT UNSIGNED NULL,
+
+    note VARCHAR(255) NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_booking_status_history_booking (booking_id, created_at),
+    INDEX idx_booking_status_history_user (changed_by),
+
+    CONSTRAINT fk_booking_status_history_booking
+        FOREIGN KEY (booking_id)
+        REFERENCES bookings(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_booking_status_history_user
+        FOREIGN KEY (changed_by)
+        REFERENCES users(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 10. BOOKING ROOMS
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS booking_rooms (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    booking_id BIGINT UNSIGNED NOT NULL,
+    room_id INT UNSIGNED NOT NULL,
+
+    check_in DATETIME NOT NULL,
+    check_out DATETIME NOT NULL,
+
+    price_per_night DECIMAL(10,2) NOT NULL,
+    number_of_nights INT UNSIGNED NOT NULL,
+    subtotal DECIMAL(10,2) NOT NULL,
+
+    guest_access_token_hash CHAR(64) NULL UNIQUE,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE KEY uq_booking_room (booking_id, room_id),
+
+    INDEX idx_booking_rooms_room (room_id),
+    INDEX idx_room_dates (room_id, check_in, check_out),
+
+    CONSTRAINT chk_booking_room_dates CHECK (check_out > check_in),
+    CONSTRAINT chk_booking_room_nights CHECK (number_of_nights >= 1),
+
+    CONSTRAINT chk_booking_room_amounts
+        CHECK (price_per_night >= 0 AND subtotal >= 0),
+
+    -- Added: line subtotal must equal price x nights
+    CONSTRAINT chk_booking_room_subtotal
+        CHECK (subtotal = price_per_night * number_of_nights),
+
+    CONSTRAINT fk_booking_rooms_booking
+        FOREIGN KEY (booking_id)
+        REFERENCES bookings(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_booking_rooms_room
+        FOREIGN KEY (room_id)
+        REFERENCES rooms(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 11. ROOM OCCUPANCY
+-- One row per room per occupied night: [check_in date, check_out date)
+-- Used by the backend to prevent double booking.
+-- Delete these rows in the same transaction whenever a booking is
+-- CANCELLED / NO_SHOW / checked out early.
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS room_occupancy (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    room_id INT UNSIGNED NOT NULL,
+
+    occupancy_date DATE NOT NULL,
+
+    booking_room_id BIGINT UNSIGNED NOT NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    UNIQUE KEY uq_room_occupancy (room_id, occupancy_date),
+
+    INDEX idx_room_occupancy_booking_room (booking_room_id),
+
+    CONSTRAINT fk_room_occupancy_room
+        FOREIGN KEY (room_id)
+        REFERENCES rooms(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_room_occupancy_booking_room
+        FOREIGN KEY (booking_room_id)
+        REFERENCES booking_rooms(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 12. PAYMENTS
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS payments (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    booking_id BIGINT UNSIGNED NOT NULL,
+
+    amount DECIMAL(10,2) NOT NULL,
+
+    payment_type ENUM('ADVANCE', 'FINAL', 'REFUND')
+        NOT NULL DEFAULT 'ADVANCE',
+
+    payment_method ENUM('CASH', 'ESEWA', 'KHALTI', 'CARD', 'BANK_TRANSFER')
+        NOT NULL,
+
+    payment_status ENUM('PENDING', 'PAID', 'FAILED', 'REFUNDED')
+        NOT NULL DEFAULT 'PENDING',
+
+    transaction_id VARCHAR(150) NULL,
+    gateway_reference VARCHAR(150) NULL,
+    gateway_response JSON NULL,
+
+    received_by INT UNSIGNED NULL,
+
+    paid_at DATETIME NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    UNIQUE KEY uq_payment_transaction (payment_method, transaction_id),
+
+    INDEX idx_payments_booking (booking_id),
+    INDEX idx_payments_status (payment_status),
+    INDEX idx_payments_received_by (received_by),
+    INDEX idx_payments_transaction (transaction_id),
+
+    CONSTRAINT chk_payment_amount CHECK (amount > 0),
+
+    CONSTRAINT fk_payments_booking
+        FOREIGN KEY (booking_id)
+        REFERENCES bookings(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_payments_received_by
+        FOREIGN KEY (received_by)
+        REFERENCES users(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 13. HOTEL SERVICES
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS hotel_services (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    name VARCHAR(150) NOT NULL,
+
+    category ENUM('FOOD', 'DRINK', 'LAUNDRY', 'OTHER')
+        NOT NULL DEFAULT 'FOOD',
+
+    description TEXT NULL,
+
+    price DECIMAL(10,2) NOT NULL,
+
+    status ENUM('ACTIVE', 'INACTIVE') NOT NULL DEFAULT 'ACTIVE',
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_services_category (category, status),
+    INDEX idx_services_status (status),
+
+    CONSTRAINT chk_service_price CHECK (price >= 0)
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 14. ORDERS
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS orders (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    booking_room_id BIGINT UNSIGNED NOT NULL,
+
+    tracking_code VARCHAR(40) NOT NULL UNIQUE,
+
+    total_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+
+    status ENUM('PENDING', 'PREPARING', 'DELIVERED', 'CANCELLED')
+        NOT NULL DEFAULT 'PENDING',
+
+    notes VARCHAR(255) NULL,
+
+    ordered_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    preparing_at DATETIME NULL,
+    delivered_at DATETIME NULL,
+
+    created_by INT UNSIGNED NULL,
+
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    INDEX idx_orders_status (status, ordered_at),
+    INDEX idx_orders_booking_room (booking_room_id),
+    INDEX idx_orders_created_by (created_by),
+
+    CONSTRAINT chk_order_total CHECK (total_amount >= 0),
+
+    CONSTRAINT fk_orders_booking_room
+        FOREIGN KEY (booking_room_id)
+        REFERENCES booking_rooms(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_orders_created_by
+        FOREIGN KEY (created_by)
+        REFERENCES users(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 15. ORDER ITEMS
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS order_items (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    order_id BIGINT UNSIGNED NOT NULL,
+
+    service_id INT UNSIGNED NOT NULL,
+
+    service_name VARCHAR(150) NOT NULL,
+
+    quantity INT UNSIGNED NOT NULL DEFAULT 1,
+
+    unit_price DECIMAL(10,2) NOT NULL,
+
+    subtotal DECIMAL(10,2) NOT NULL,
+
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    INDEX idx_order_items_order (order_id),
+    INDEX idx_order_items_service (service_id),
+
+    CONSTRAINT chk_order_item_quantity CHECK (quantity >= 1),
+
+    CONSTRAINT chk_order_item_price
+        CHECK (unit_price >= 0 AND subtotal >= 0),
+
+    -- Added: line subtotal must equal quantity x unit price
+    CONSTRAINT chk_order_item_subtotal
+        CHECK (subtotal = quantity * unit_price),
+
+    CONSTRAINT fk_order_items_order
+        FOREIGN KEY (order_id)
+        REFERENCES orders(id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+
+    CONSTRAINT fk_order_items_service
+        FOREIGN KEY (service_id)
+        REFERENCES hotel_services(id)
+        ON DELETE RESTRICT
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 16. INVOICE COUNTERS
+-- Safe increment inside the invoice transaction:
+--   INSERT INTO invoice_counters (fiscal_year, last_number) VALUES (?, 1)
+--   ON DUPLICATE KEY UPDATE last_number = LAST_INSERT_ID(last_number + 1);
+--   (then read LAST_INSERT_ID(); on first insert it is 1)
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS invoice_counters (
+    fiscal_year VARCHAR(10) PRIMARY KEY,
+
+    last_number INT UNSIGNED NOT NULL DEFAULT 0
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 17. INVOICES
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS invoices (
+    id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    invoice_number VARCHAR(50) NOT NULL UNIQUE,
+
+    booking_id BIGINT UNSIGNED NOT NULL,
+
+    customer_name VARCHAR(150) NOT NULL,
+    customer_phone VARCHAR(30) NULL,
+    customer_address VARCHAR(255) NULL,
+    customer_pan VARCHAR(30) NULL,
+
+    items JSON NOT NULL,
+
+    subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+    discount DECIMAL(10,2) NOT NULL DEFAULT 0,
+    service_charge DECIMAL(10,2) NOT NULL DEFAULT 0,
+
+    tax_rate DECIMAL(5,2) NOT NULL DEFAULT 0,   -- set to 13.00 if charging Nepal VAT
+    tax DECIMAL(10,2) NOT NULL DEFAULT 0,
+
+    total_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+    amount_paid DECIMAL(10,2) NOT NULL DEFAULT 0,
+    amount_due DECIMAL(10,2) NOT NULL DEFAULT 0,
+
+    status ENUM('UNPAID', 'PARTIALLY_PAID', 'PAID', 'VOID')
+        NOT NULL DEFAULT 'UNPAID',
+
+    issued_by INT UNSIGNED NULL,
+
+    issued_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    voided_at DATETIME NULL,
+    void_reason VARCHAR(255) NULL,
+
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP,
+
+    -- One non-void invoice per booking.
+    -- NOTE: fk_invoices_booking uses ON UPDATE RESTRICT on purpose; MySQL
+    -- forbids CASCADE on the base column of a STORED generated column.
+    active_booking_id BIGINT UNSIGNED
+        GENERATED ALWAYS AS (
+            CASE
+                WHEN status = 'VOID' THEN NULL
+                ELSE booking_id
+            END
+        ) STORED,
+
+    UNIQUE KEY uq_one_active_invoice (active_booking_id),
+
+    INDEX idx_invoices_booking (booking_id),
+    INDEX idx_invoices_status (status),
+    INDEX idx_invoices_issued_by (issued_by),
+
+    CONSTRAINT chk_invoice_amounts
+        CHECK (
+            subtotal >= 0
+            AND discount >= 0
+            AND service_charge >= 0
+            AND tax_rate >= 0
+            AND tax >= 0
+            AND total_amount >= 0
+            AND amount_paid >= 0
+            AND amount_due >= 0
+        ),
+
+    -- Added: due must equal total minus paid
+    CONSTRAINT chk_invoice_due
+        CHECK (amount_due = total_amount - amount_paid),
+
+    CONSTRAINT fk_invoices_booking
+        FOREIGN KEY (booking_id)
+        REFERENCES bookings(id)
+        ON DELETE RESTRICT
+        ON UPDATE RESTRICT,
+
+    CONSTRAINT fk_invoices_issued_by
+        FOREIGN KEY (issued_by)
+        REFERENCES users(id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- 18. WEBSITE SETTINGS
+-- =========================================================
+
+CREATE TABLE IF NOT EXISTS website_settings (
+    id INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+
+    setting_key VARCHAR(100) NOT NULL UNIQUE,
+
+    setting_value TEXT NULL,
+
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+        ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB;
+
+
+-- =========================================================
+-- DEFAULT WEBSITE SETTINGS
+-- =========================================================
+
+INSERT IGNORE INTO website_settings
+    (setting_key, setting_value)
+VALUES
+    ('hotel_name', 'Kalika Hotel & Lodge'),
+    ('hotel_phone', '9842042150'),
+    ('hotel_email', ''),
+    ('hotel_address', 'Itahari-9, Buspark'),
+    ('hotel_logo', ''),
+    ('facebook_url', ''),
+    ('instagram_url', ''),
+    ('map_url', ''),
+    ('footer_description', 'Kalika Hotel & Lodge'),
+    ('copyright_text', '© Kalika Hotel & Lodge. All rights reserved.');
