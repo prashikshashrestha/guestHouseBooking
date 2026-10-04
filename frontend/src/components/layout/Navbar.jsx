@@ -9,7 +9,7 @@ const Navbar = () => {
   const user = null; // e.g. { name: 'Sujan', role: 'guest' }
 
   const navLinks = [
-    { name: 'Home', path: '/' },
+    { name: 'Home', path: '/home' },
     { name: 'Rooms', path: '/rooms' },
     { name: 'My Bookings', path: '/my-bookings' },
     { name: 'About Us', path: '/about' },
@@ -24,7 +24,7 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex-shrink-0">
             <Link 
-              to="/" 
+              to="/home" 
               className="text-2xl font-bold tracking-tight text-slate-900 hover:text-sky-600 transition"
             >
               Client <span className="text-sky-600 font-extrabold">Portal</span>
