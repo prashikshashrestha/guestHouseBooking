@@ -1,10 +1,18 @@
+import React from "react";
+import { BrowserRouter } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import { BookingProvider } from "./context/BookingContext";
+import AppRoutes from "./routes/AppRoutes";
+
 function App() {
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-      <h1 className="text-4xl font-bold text-blue-900">
-        Guest House Booking Systems
-      </h1>
-    </div>
+    <BrowserRouter>
+      <AuthProvider>
+        <BookingProvider>
+          <AppRoutes />
+        </BookingProvider>
+      </AuthProvider>
+    </BrowserRouter>
   );
 }
 
