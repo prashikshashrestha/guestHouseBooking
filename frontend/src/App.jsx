@@ -22,6 +22,7 @@ import AdminBookingsPage from './pages/admin/AdminBookingsPage';
 import AdminGuestsPage from './pages/admin/AdminGuestsPage';
 import AdminPaymentsPage from './pages/admin/AdminPaymentsPage';
 import AdminSettingsPage from './pages/admin/AdminSettingsPage';
+import AdninRoomAdd from './pages/admin/AdninRoomAdd';
 
 // Common
 import NotFoundPage from './pages/NotFoundPage';
@@ -74,6 +75,7 @@ function App() {
           <Route path="guests" element={<AdminGuestsPage />} />
           <Route path="payments" element={<AdminPaymentsPage />} />
           <Route path="settings" element={<AdminSettingsPage />} />
+          <Route path="room/add" element={<AdninRoomAdd />} />
         </Route>
 
         {/* Not Found Route */}
