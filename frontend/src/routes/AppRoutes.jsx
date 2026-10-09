@@ -5,6 +5,9 @@ import HomePage from "../pages/HomePage";
 import RoomsPage from "../pages/RoomsPage";
 import RoomDetailsPage from "../pages/RoomDetailsPage";
 import DiningPage from "../pages/DiningPage";
+import GalleryPage from "../pages/GalleryPage";
+import AboutPage from "../pages/AboutPage";
+import ContactPage from "../pages/ContactPage";
 import CheckoutPage from "../pages/CheckoutPage";
 import BookingSuccessPage from "../pages/BookingSuccessPage";
 import MyBookingsPage from "../pages/MyBookingsPage";
@@ -21,8 +24,12 @@ export const AppRoutes = () => {
         <Route path="/rooms" element={<RoomsPage />} />
         <Route path="/rooms/:id" element={<RoomDetailsPage />} />
         <Route path="/dining" element={<DiningPage />} />
+        <Route path="/gallery" element={<GalleryPage />} />
+        <Route path="/about" element={<AboutPage />} />
+        <Route path="/contact" element={<ContactPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/booking-success" element={<BookingSuccessPage />} />
+        <Route path="/booking-success/:id" element={<BookingSuccessPage />} />
         <Route path="/my-bookings" element={<MyBookingsPage />} />
         <Route path="/admin" element={<AdminDashboardPage />} />
         <Route path="/login" element={<LoginPage />} />

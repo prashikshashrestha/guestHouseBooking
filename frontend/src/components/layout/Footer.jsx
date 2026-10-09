@@ -67,18 +67,23 @@ export const Footer = () => {
                 </Link>
               </li>
               <li>
-                <a href="/#facilities" className="text-stone-600 hover:text-amber-700 transition-colors">
-                  Amenities & Facilities
-                </a>
+                <Link to="/gallery" className="text-stone-600 hover:text-amber-700 transition-colors">
+                  Photo & Space Gallery
+                </Link>
               </li>
               <li>
-                <a href="/#about" className="text-stone-600 hover:text-amber-700 transition-colors">
+                <Link to="/about" className="text-stone-600 hover:text-amber-700 transition-colors">
                   About Kalika Hotel
-                </a>
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="text-stone-600 hover:text-amber-700 transition-colors">
+                  Location & Contact
+                </Link>
               </li>
               <li>
                 <Link to="/my-bookings" className="text-stone-600 hover:text-amber-700 transition-colors">
-                  Lookup My Booking
+                  My Reservations
                 </Link>
               </li>
             </ul>

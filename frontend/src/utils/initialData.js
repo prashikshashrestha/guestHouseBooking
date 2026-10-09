@@ -418,3 +418,151 @@ export const INITIAL_BILLS = [
     createdAt: "2026-10-04T11:15:00.000Z",
   },
 ];
+
+export const HOTEL_GALLERY = [
+  {
+    id: "gal-1",
+    title: "Reception & Hospitality Lobby",
+    category: "Exterior",
+    image: "/images/hero.jpg",
+    description: "Inviting 24/7 reception desk and guest lounge situated at the entrance of Kalika Hotel & Lodge.",
+  },
+  {
+    id: "gal-2",
+    title: "The Garden Pavilion Restaurant",
+    category: "Dining",
+    image: "/images/dining-main.jpg",
+    description: "Sunlit dining hall opening to courtyard greenery, serving authentic Thakali and multi-cuisine.",
+  },
+  {
+    id: "gal-3",
+    title: "Paddy-View Open Terrace Kitchen",
+    category: "Dining",
+    image: "/images/dining-terrace.jpg",
+    description: "Open-air wooden terrace overlooking lush green paddy fields and peaceful countryside.",
+  },
+  {
+    id: "gal-4",
+    title: "Mezzanine Timber Lounge & Bar",
+    category: "Dining",
+    image: "/images/dining-lounge.jpg",
+    description: "Warm hardwood loft with comfy plush couches and handwoven lanterns for relaxing conversations.",
+  },
+  {
+    id: "gal-5",
+    title: "Veranda & Porch Garden Dining",
+    category: "Dining",
+    image: "/images/dining-veranda.jpg",
+    description: "Sheltered outdoor log tables framed by lush hanging ferns and fresh morning greenery.",
+  },
+  {
+    id: "gal-6",
+    title: "Deluxe King Room",
+    category: "Rooms",
+    image: "/images/room2.jpeg",
+    description: "Elegantly finished deluxe room with AC, smart TV, spring mattress, and en-suite bath.",
+  },
+  {
+    id: "gal-7",
+    title: "Super Deluxe Balcony Suite",
+    category: "Rooms",
+    image: "/images/room3.jpeg",
+    description: "Spacious suite featuring private scenic balcony, sound-insulated windows, and warm ambient lighting.",
+  },
+  {
+    id: "gal-8",
+    title: "Standard Transit Room",
+    category: "Rooms",
+    image: "/images/room1.jpeg",
+    description: "Immaculate and cozy standard room near front desk, ideal for buspark travelers.",
+  },
+  {
+    id: "gal-9",
+    title: "Executive Luxury Living",
+    category: "Rooms",
+    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?auto=format&fit=crop&w=1200&q=80",
+    description: "Top-floor executive suite featuring separate living room, plush armchairs, and king master bed.",
+  },
+  {
+    id: "gal-10",
+    title: "Authentic Nepali Thakali Khana",
+    category: "Dining",
+    image: "/images/thakali.jpeg",
+    description: "Traditional Himalayan brass plate feast with organic dal, local saag, chicken curry, and ghee.",
+  },
+  {
+    id: "gal-11",
+    title: "Charcoal Grilled Jheer Sekuwa",
+    category: "Dining",
+    image: "/images/sekuwa.jpeg",
+    description: "Freshly marinated and grilled skewered meats served hot with crispy chiura and spicy tomato achar.",
+  },
+  {
+    id: "gal-12",
+    title: "Steamed Himalayan Momo",
+    category: "Dining",
+    image: "/images/Momo.jpeg",
+    description: "Handcrafted juicy dumplings filled with seasoned chicken, served with spicy sesame chutney.",
+  },
+  {
+    id: "gal-13",
+    title: "24/7 Power & Generator Backup",
+    category: "Facilities",
+    image: "https://images.unsplash.com/photo-1584622650111-993a426fbf0a?auto=format&fit=crop&w=1000&q=80",
+    description: "Heavy-duty generator backup ensuring round-the-clock air conditioning, lighting, and hot geysers.",
+  },
+  {
+    id: "gal-14",
+    title: "Secure On-Site Parking",
+    category: "Facilities",
+    image: "https://images.unsplash.com/photo-1506521781263-d8422e82f27a?auto=format&fit=crop&w=1000&q=80",
+    description: "Fenced on-premises parking directly adjacent to the buspark for private cars, bikes, and safari jeeps.",
+  },
+  {
+    id: "gal-15",
+    title: "High-Speed Dual-Band Wi-Fi",
+    category: "Facilities",
+    image: "https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1000&q=80",
+    description: "Dedicated optical fiber broadband connectivity accessible across all rooms, dining halls, and terraces.",
+  },
+];
+
+export const HOTEL_FACILITIES = [
+  {
+    id: "fac-wifi",
+    title: "High-Speed Optical Wi-Fi",
+    description: "Seamless dual-band Wi-Fi throughout rooms, lobby, and dining gardens for remote work and streaming.",
+    icon: "Wifi",
+  },
+  {
+    id: "fac-power",
+    title: "24/7 Generator Power Backup",
+    description: "Continuous heavy-duty generator backup ensuring lights, AC, and 24-hour hot geysers never stop.",
+    icon: "Zap",
+  },
+  {
+    id: "fac-parking",
+    title: "Secure Buspark Parking",
+    description: "Dedicated fenced parking for cars, tourist vans, and motorbikes right next to Itahari-9 Buspark.",
+    icon: "Car",
+  },
+  {
+    id: "fac-dining",
+    title: "Multi-Cuisine Dining & Room Service",
+    description: "Freshly prepared authentic Thakali thali, grilled sekuwa, and breakfast delivered to your room.",
+    icon: "UtensilsCrossed",
+  },
+  {
+    id: "fac-reception",
+    title: "24-Hour Front Desk & Check-in",
+    description: "Always staffed reception for early-morning bus arrivals, late check-ins, and local travel advice.",
+    icon: "Clock",
+  },
+  {
+    id: "fac-security",
+    title: "CCTV Security & Luggage Care",
+    description: "Monitored premises, secure luggage holding, and attentive housekeeping for peace of mind.",
+    icon: "Shield",
+  },
+];
+

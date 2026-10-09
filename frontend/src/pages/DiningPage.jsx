@@ -3,18 +3,11 @@ import { Link } from "react-router-dom";
 import {
   UtensilsCrossed,
   Clock,
-  Coffee,
-  Sparkles,
   ShieldCheck,
   CheckCircle2,
   Phone,
-  Flame,
   Search,
-  ChevronRight,
-  Sun,
   Leaf,
-  Layers,
-  MapPin,
 } from "lucide-react";
 import { useBooking } from "../context/BookingContext";
 import { formatCurrency } from "../utils/formatDate";

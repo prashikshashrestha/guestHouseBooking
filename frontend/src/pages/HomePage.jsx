@@ -1,22 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  Calendar,
-  Users,
-  Search,
   ArrowRight,
   Wifi,
-  Coffee,
-  Tv,
-  Wind,
   Shield,
   UtensilsCrossed,
   MapPin,
   Phone,
   Clock,
-  Sparkles,
   ChevronRight,
-  Video,
   CheckCircle2,
   Car,
   Zap,
@@ -25,13 +17,13 @@ import RoomCard from "../components/rooms/RoomCard";
 import Button from "../components/common/Button";
 import Modal from "../components/common/Modal";
 import { useBooking } from "../context/BookingContext";
-import { HOTEL_INFO } from "../utils/initialData";
+import { HOTEL_INFO, HOTEL_GALLERY } from "../utils/initialData";
 import { formatCurrency } from "../utils/formatDate";
 import { DINING_SPACES } from "./DiningPage";
 
 export const HomePage = () => {
   const navigate = useNavigate();
-  const { rooms, categories, foodItems, searchParams, setSearchParams, placeOrder, bookings } = useBooking();
+  const { rooms, categories, foodItems, searchParams, setSearchParams, placeOrder } = useBooking();
 
   // Room Order Modal for In-Room Dining (Feature 4)
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
@@ -43,7 +35,9 @@ export const HomePage = () => {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    navigate(`/rooms?category=${searchParams.category}`);
+    navigate(
+      `/rooms?category=${encodeURIComponent(searchParams.category)}&checkIn=${searchParams.checkIn}&checkOut=${searchParams.checkOut}&guests=${searchParams.guests}`
+    );
   };
 
   const handlePlaceRoomOrder = (e) => {
@@ -110,9 +104,27 @@ export const HomePage = () => {
             ENJOY YOUR STAY
           </h1>
 
-          <p className="text-xs sm:text-sm md:text-base text-stone-100 max-w-2xl mx-auto font-normal tracking-wider leading-relaxed mb-8 drop-shadow">
+          <p className="text-xs sm:text-sm md:text-base text-stone-100 max-w-2xl mx-auto font-normal tracking-wider leading-relaxed mb-6 drop-shadow">
             Located conveniently at <strong>Itahari-9 Buspark</strong>. Experience authentic Nepalese hospitality, comfortable luxury rooms, and 24/7 dining services.
           </p>
+
+          <p className="text-amber-200 text-xs sm:text-sm font-semibold tracking-widest uppercase mb-6 drop-shadow-sm">
+            Comfortable stays, warm hospitality.
+          </p>
+
+          {/* Hero CTAs */}
+          <div className="flex flex-wrap items-center justify-center gap-3.5 mb-8">
+            <a href="#booking-widget">
+              <Button variant="gold" size="md" className="font-bold uppercase tracking-wider text-xs">
+                Check Availability
+              </Button>
+            </a>
+            <Link to="/rooms">
+              <Button variant="secondary" size="md" className="border-white/30 text-white hover:bg-white/10 font-bold uppercase tracking-wider text-xs">
+                Explore Rooms
+              </Button>
+            </Link>
+          </div>
 
           <div className="flex flex-wrap items-center justify-center gap-3 text-xs">
             <span className="px-4 py-2 rounded-full bg-white/95 backdrop-blur-md border border-stone-200 text-stone-900 font-semibold shadow-sm">
@@ -128,7 +140,7 @@ export const HomePage = () => {
         </div>
 
         {/* Floating Availability Booking Engine Bar */}
-        <div className="relative z-20 max-w-5xl mx-auto w-full px-4">
+        <div id="booking-widget" className="relative z-20 max-w-5xl mx-auto w-full px-4 scroll-mt-28">
           <form
             onSubmit={handleSearchSubmit}
             className="bg-white/95 backdrop-blur-xl rounded-2xl p-4 sm:p-6 shadow-2xl border border-white/40 text-stone-900 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end"
@@ -218,6 +230,62 @@ export const HomePage = () => {
               </Button>
             </div>
           </form>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* WELCOME SECTION (Section 6 Requirement)                                    */}
+      {/* ========================================================================= */}
+      <section className="py-20 bg-stone-50 border-b border-stone-200/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            <div className="lg:col-span-6 space-y-6">
+              <div>
+                <span className="text-xs font-bold tracking-widest text-amber-700 uppercase">
+                  Welcome to Kalika Hotel & Lodge
+                </span>
+                <h2 className="text-3xl sm:text-4xl font-bold font-display-luxury text-stone-900 mt-1 leading-snug">
+                  Authentic Nepalese Hospitality in the Heart of Itahari
+                </h2>
+              </div>
+              <p className="text-sm text-stone-600 leading-relaxed">
+                Situated right beside the Itahari-9 Buspark, Kalika Hotel & Lodge is designed to provide travelers, business guests, and visiting families with peaceful sanctuary and effortless comfort.
+              </p>
+              <p className="text-sm text-stone-600 leading-relaxed">
+                Enjoy sanitized, air-conditioned rooms, 24/7 continuous generator electricity backup, piping-hot geysers, secure vehicle parking, and delicious local Thakali dining without having to navigate city traffic.
+              </p>
+              <div className="pt-2">
+                <Link to="/about">
+                  <Button variant="gold" size="md" className="font-bold text-xs uppercase tracking-wider">
+                    Learn More About Our Hotel →
+                  </Button>
+                </Link>
+              </div>
+            </div>
+
+            <div className="lg:col-span-6">
+              <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-stone-200 shadow-xl group">
+                <img
+                  src="/images/hero.jpg"
+                  alt="Kalika Hotel & Lodge Welcome"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  onError={(e) => {
+                    e.currentTarget.src = "/images/dining-main.jpg";
+                  }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-stone-950/70 via-transparent to-transparent flex items-end p-6 sm:p-8">
+                  <div className="text-white">
+                    <p className="text-xs uppercase tracking-widest font-bold text-amber-300">
+                      Itahari-9, Sunsari, Nepal
+                    </p>
+                    <p className="font-display-luxury text-lg sm:text-xl font-bold mt-0.5">
+                      "Comfortable stays, warm hospitality."
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -569,7 +637,75 @@ export const HomePage = () => {
       </section>
 
       {/* ========================================================================= */}
-      {/* ABOUT US & CONTACT (Photo 2 Information)                                  */}
+      {/* GALLERY PREVIEW (Section 6 Requirement)                                    */}
+      {/* ========================================================================= */}
+      <section className="py-20 bg-stone-100/50 border-t border-stone-200/80">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
+            <div>
+              <span className="text-xs font-bold tracking-widest text-amber-700 uppercase">
+                Visual Experience
+              </span>
+              <h2 className="text-3xl sm:text-4xl font-bold font-display-luxury text-stone-900 mt-1">
+                Atmosphere & Spaces Preview
+              </h2>
+              <p className="text-sm text-stone-600 mt-1">
+                A glimpse of our comfortable suites, courtyard gardens, open terrace dining, and guest services.
+              </p>
+            </div>
+            <Link
+              to="/gallery"
+              className="inline-flex items-center gap-2 text-xs font-bold text-amber-700 hover:text-amber-800 uppercase tracking-wider group"
+            >
+              <span>View Full Gallery ({HOTEL_GALLERY.length} Photos)</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {HOTEL_GALLERY.slice(0, 4).map((item) => (
+              <Link
+                key={item.id}
+                to="/gallery"
+                className="bg-white rounded-2xl overflow-hidden border border-stone-200/90 shadow-sm hover:shadow-md transition-all group flex flex-col justify-between"
+              >
+                <div className="relative aspect-[16/11] overflow-hidden bg-stone-100">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => {
+                      e.currentTarget.src = "/images/hero.jpg";
+                    }}
+                  />
+                  <div className="absolute top-3 left-3 bg-stone-900/80 backdrop-blur-md px-2.5 py-0.5 rounded-full text-[10px] font-bold text-amber-300 uppercase">
+                    {item.category}
+                  </div>
+                </div>
+                <div className="p-4">
+                  <h3 className="font-bold text-stone-900 text-sm group-hover:text-amber-700 transition-colors">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs text-stone-500 mt-1 line-clamp-2">
+                    {item.description}
+                  </p>
+                </div>
+              </Link>
+            ))}
+          </div>
+
+          <div className="text-center mt-8">
+            <Link to="/gallery">
+              <Button variant="secondary" size="md" className="font-bold">
+                Open Hotel Photo Gallery & Lightbox
+              </Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* ABOUT US & CONTACT PREVIEW (Section 6 Requirement)                        */}
       {/* ========================================================================= */}
       <section id="about" className="py-20 bg-stone-100/70 border-t border-stone-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -600,9 +736,17 @@ export const HomePage = () => {
                   <p className="text-xs text-stone-500 mt-1">Power Backup & Wi-Fi</p>
                 </div>
               </div>
+
+              <div className="pt-2">
+                <Link to="/about">
+                  <Button variant="secondary" size="md" className="font-bold">
+                    Read Full Story & About Page →
+                  </Button>
+                </Link>
+              </div>
             </div>
 
-            {/* Contact Card */}
+            {/* Contact & Location Card */}
             <div id="contact" className="bg-white rounded-3xl p-8 border border-stone-200 shadow-xl space-y-6">
               <h3 className="text-xl font-bold text-stone-900 font-display-luxury">
                 Direct Contact & Inquiries
@@ -636,14 +780,49 @@ export const HomePage = () => {
                 </div>
               </div>
 
-              <div className="pt-2">
-                <Link to="/rooms">
-                  <Button variant="gold" size="lg" className="w-full">
+              <div className="pt-2 flex flex-col sm:flex-row gap-3">
+                <Link to="/rooms" className="flex-1">
+                  <Button variant="gold" size="md" className="w-full font-bold">
                     Book Your Stay Now
+                  </Button>
+                </Link>
+                <Link to="/contact" className="flex-1">
+                  <Button variant="secondary" size="md" className="w-full font-bold">
+                    Contact & Directions
                   </Button>
                 </Link>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ========================================================================= */}
+      {/* FINAL CTA SECTION (Section 6 Requirement)                                  */}
+      {/* ========================================================================= */}
+      <section className="py-20 bg-gradient-to-r from-stone-900 via-stone-850 to-stone-900 text-white relative overflow-hidden border-t border-stone-800">
+        <div className="max-w-5xl mx-auto px-4 text-center space-y-6">
+          <span className="text-xs font-bold tracking-widest text-amber-400 uppercase">
+            Reservations Open
+          </span>
+          <h2 className="text-3xl sm:text-5xl font-bold font-display-luxury">
+            Plan your stay at Kalika Hotel & Lodge.
+          </h2>
+          <p className="text-xs sm:text-sm text-stone-300 max-w-xl mx-auto leading-relaxed">
+            Rest comfortably near Itahari-9 Buspark with sanitized luxury rooms, 24-hour power backup, in-room dining, and authentic hospitality.
+          </p>
+          <div className="pt-2 flex flex-wrap items-center justify-center gap-4">
+            <Link to="/rooms">
+              <Button variant="gold" size="lg" className="font-bold uppercase tracking-wider text-xs px-8 py-4">
+                Book Your Stay
+              </Button>
+            </Link>
+            <a
+              href={`tel:${HOTEL_INFO.phone}`}
+              className="px-6 py-3.5 rounded-full border border-white/20 text-white hover:bg-white/10 text-xs font-bold uppercase tracking-wider transition-colors"
+            >
+              Call Front Desk: {HOTEL_INFO.phone}
+            </a>
           </div>
         </div>
       </section>
