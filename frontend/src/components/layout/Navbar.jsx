@@ -79,7 +79,7 @@ export const Navbar = () => {
           : "bg-white/90 backdrop-blur-md shadow-xs border-b border-stone-200/70 text-stone-800 py-3.5"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="luxury-container">
         <div className="flex items-center justify-between">
           {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-3 group">

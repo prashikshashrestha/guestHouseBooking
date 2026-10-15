@@ -44,7 +44,7 @@ export const GalleryPage = () => {
     <div className="pt-24 pb-20 bg-stone-50 min-h-screen">
       {/* Hero Banner */}
       <div className="bg-gradient-to-r from-amber-50 via-stone-100/90 to-amber-100/40 text-stone-900 py-12 mb-10 border-b border-stone-200/90">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="luxury-container text-center">
           <span className="text-xs font-bold tracking-widest text-amber-800 uppercase">
             Visual Experience & Atmosphere
           </span>
@@ -57,7 +57,7 @@ export const GalleryPage = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="luxury-container">
         {/* Category Filter Pills */}
         <div className="flex items-center justify-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
           {categories.map((cat) => (
@@ -86,7 +86,7 @@ export const GalleryPage = () => {
         </div>
 
         {/* Responsive Gallery Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filteredImages.map((item, idx) => (
             <div
               key={item.id}

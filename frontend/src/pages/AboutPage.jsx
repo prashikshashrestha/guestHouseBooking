@@ -16,7 +16,7 @@ export const AboutPage = () => {
     <div className="pt-24 pb-20 bg-stone-50 min-h-screen">
       {/* Hero Banner */}
       <div className="bg-gradient-to-r from-amber-50 via-stone-100/90 to-amber-100/50 text-stone-900 py-14 mb-12 border-b border-stone-200/90">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="luxury-container text-center">
           <span className="text-xs font-bold tracking-widest text-amber-800 uppercase">
             Nepalese Warmth & Contemporary Comfort
           </span>
@@ -29,7 +29,7 @@ export const AboutPage = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
+      <div className="luxury-container space-y-20">
         {/* Story & Introduction Section with Visuals */}
         <section className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-6 space-y-6">

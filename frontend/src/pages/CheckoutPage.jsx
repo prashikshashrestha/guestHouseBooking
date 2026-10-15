@@ -149,7 +149,7 @@ export const CheckoutPage = () => {
 
   return (
     <div className="pt-24 pb-20 bg-stone-50 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="luxury-container">
         {/* Header navigation */}
         <div className="mb-6 flex items-center justify-between">
           <Link

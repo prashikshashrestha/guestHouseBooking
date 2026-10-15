@@ -81,7 +81,7 @@ export const ContactPage = () => {
     <div className="pt-24 pb-20 bg-stone-50 min-h-screen">
       {/* Hero Banner */}
       <div className="bg-gradient-to-r from-amber-50 via-stone-100/90 to-amber-100/50 text-stone-900 py-12 mb-10 border-b border-stone-200/90">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="luxury-container text-center">
           <span className="text-xs font-bold tracking-widest text-amber-800 uppercase">
             Get in Touch
           </span>
@@ -94,7 +94,7 @@ export const ContactPage = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="luxury-container">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Contact Details & Map Column */}
           <div className="lg:col-span-5 space-y-6">

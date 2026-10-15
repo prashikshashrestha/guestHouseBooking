@@ -117,7 +117,7 @@ export const RoomsPage = () => {
     <div className="pt-24 pb-20 bg-stone-50 min-h-screen">
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-amber-50 via-stone-100/80 to-amber-100/50 text-stone-900 py-12 mb-8 border-b border-stone-200/90">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="luxury-container text-center">
           <span className="text-xs font-bold tracking-widest text-amber-800 uppercase">
             Accommodations at {HOTEL_INFO.name}
           </span>
@@ -130,7 +130,7 @@ export const RoomsPage = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="luxury-container">
         {/* Filters */}
         <RoomFilterBar
           selectedCategory={selectedCategory}
@@ -171,7 +171,7 @@ export const RoomsPage = () => {
             <Loader text="Checking room availability..." />
           </div>
         ) : filteredRooms.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-8">
             {filteredRooms.map((room) => (
               <RoomCard key={room.id} room={room} />
             ))}

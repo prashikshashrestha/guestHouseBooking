@@ -6,7 +6,7 @@ import { HOTEL_INFO } from "../../utils/initialData";
 export const Footer = () => {
   return (
     <footer className="bg-stone-100/90 text-stone-700 pt-16 pb-12 border-t border-stone-200/90">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="luxury-container">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
           {/* Brand & Note info */}
           <div className="space-y-4">

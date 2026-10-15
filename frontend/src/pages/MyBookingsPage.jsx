@@ -163,7 +163,7 @@ export const MyBookingsPage = () => {
     <div className="pt-24 pb-20 bg-stone-50 min-h-screen">
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-amber-50 via-stone-100/90 to-amber-100/50 text-stone-900 py-12 mb-8 border-b border-stone-200/90">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="luxury-container text-center">
           <span className="text-xs font-bold tracking-widest text-amber-800 uppercase">
             Customer Reservation Management
           </span>
@@ -176,7 +176,7 @@ export const MyBookingsPage = () => {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+      <div className="luxury-container space-y-6">
         {/* Unauthenticated notification banner */}
         {!isAuthenticated && (
           <div className="bg-amber-50 border border-amber-200/90 rounded-2xl p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">

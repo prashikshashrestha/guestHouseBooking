@@ -153,7 +153,7 @@ export const DiningPage = () => {
       {/* 1. Header Banner                                                        */}
       {/* ======================================================================= */}
       <div className="bg-gradient-to-r from-amber-50 via-stone-100/80 to-amber-100/50 text-stone-900 py-14 mb-12 border-b border-stone-200/90">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="luxury-container text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-100/80 text-amber-800 text-xs font-bold uppercase tracking-wider mb-3">
             <UtensilsCrossed className="w-3.5 h-3.5" />
             <span>Kalika Culinary & Dining Experience</span>
@@ -191,7 +191,7 @@ export const DiningPage = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-20">
+      <div className="luxury-container space-y-20">
         {/* ===================================================================== */}
         {/* 2. Dining Spaces Showcase (User's 4 Photos)                           */}
         {/* ===================================================================== */}

@@ -317,7 +317,7 @@ export const AdminDashboardPage = () => {
 
   return (
     <div className="pt-24 pb-20 bg-stone-100 min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="luxury-container">
         {/* Top Header & Reset Demo Action */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-6 mb-6 border-b border-stone-200 gap-4">
           <div>

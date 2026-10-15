@@ -93,7 +93,7 @@ export const HomePage = () => {
         </div>
 
         {/* Central Hero Titles */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4 text-center my-auto py-16">
+        <div className="relative z-10 max-w-6xl mx-auto px-4 text-center my-auto py-16">
           {/* Welcome subtitle in cursive/serif italic */}
           <p className="font-serif-luxury text-xl sm:text-2xl lg:text-3xl text-amber-300 italic tracking-wide mb-3 animate-in fade-in slide-in-from-top-4 duration-700 drop-shadow-md">
             Welcome to Kalika Hotel & Lodge
@@ -140,7 +140,7 @@ export const HomePage = () => {
         </div>
 
         {/* Floating Availability Booking Engine Bar */}
-        <div id="booking-widget" className="relative z-20 max-w-5xl mx-auto w-full px-4 scroll-mt-28">
+        <div id="booking-widget" className="relative z-20 luxury-container scroll-mt-28">
           <form
             onSubmit={handleSearchSubmit}
             className="bg-white/95 backdrop-blur-xl rounded-2xl p-4 sm:p-6 shadow-2xl border border-white/40 text-stone-900 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end"
@@ -237,7 +237,7 @@ export const HomePage = () => {
       {/* WELCOME SECTION (Section 6 Requirement)                                    */}
       {/* ========================================================================= */}
       <section className="py-20 bg-stone-50 border-b border-stone-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="luxury-container">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             <div className="lg:col-span-6 space-y-6">
               <div>
@@ -293,7 +293,7 @@ export const HomePage = () => {
       {/* ROOM CATEGORIES & PRICING BAR (Professor Feature 1)                       */}
       {/* ========================================================================= */}
       <section className="py-16 bg-stone-100/60 border-b border-stone-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="luxury-container">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <span className="text-xs font-bold tracking-widest text-amber-600 uppercase">
               Room Categories & Cost Setting
@@ -348,7 +348,7 @@ export const HomePage = () => {
       {/* FEATURED ROOMS SHOWCASE (Professor Feature 2: Images, Videos, Details)    */}
       {/* ========================================================================= */}
       <section className="py-20 bg-stone-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="luxury-container">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <div>
               <span className="text-xs font-bold tracking-widest text-amber-600 uppercase">
@@ -385,7 +385,7 @@ export const HomePage = () => {
       {/* IN-ROOM DINING & RESTAURANT SPACES (User Photos & Ambience)               */}
       {/* ========================================================================= */}
       <section id="dining" className="py-20 bg-gradient-to-b from-stone-100/90 via-amber-50/25 to-white text-stone-900 relative overflow-hidden border-t border-b border-stone-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-16">
+        <div className="luxury-container relative z-10 space-y-16">
           {/* Section Header */}
           <div className="text-center max-w-3xl mx-auto">
             <span className="text-xs font-bold tracking-widest text-amber-700 uppercase">
@@ -547,7 +547,7 @@ export const HomePage = () => {
       {/* FACILITIES & AMENITIES                                                    */}
       {/* ========================================================================= */}
       <section id="facilities" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="luxury-container">
           <div className="text-center max-w-3xl mx-auto mb-14">
             <span className="text-xs font-bold tracking-widest text-amber-600 uppercase">
               Guest Amenities
@@ -640,7 +640,7 @@ export const HomePage = () => {
       {/* GALLERY PREVIEW (Section 6 Requirement)                                    */}
       {/* ========================================================================= */}
       <section className="py-20 bg-stone-100/50 border-t border-stone-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="luxury-container">
           <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-4">
             <div>
               <span className="text-xs font-bold tracking-widest text-amber-700 uppercase">
@@ -708,7 +708,7 @@ export const HomePage = () => {
       {/* ABOUT US & CONTACT PREVIEW (Section 6 Requirement)                        */}
       {/* ========================================================================= */}
       <section id="about" className="py-20 bg-stone-100/70 border-t border-stone-200/80">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="luxury-container">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">
               <div>
@@ -801,7 +801,7 @@ export const HomePage = () => {
       {/* FINAL CTA SECTION (Section 6 Requirement)                                  */}
       {/* ========================================================================= */}
       <section className="py-20 bg-gradient-to-r from-stone-900 via-stone-850 to-stone-900 text-white relative overflow-hidden border-t border-stone-800">
-        <div className="max-w-5xl mx-auto px-4 text-center space-y-6">
+        <div className="max-w-6xl mx-auto px-4 text-center space-y-6">
           <span className="text-xs font-bold tracking-widest text-amber-400 uppercase">
             Reservations Open
           </span>
