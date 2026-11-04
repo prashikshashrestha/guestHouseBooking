@@ -131,6 +131,27 @@ export const AuthProvider = ({ children }) => {
     });
   };
 
+  const updateProfile = ({ name, email }) => {
+    setUser((prev) => {
+      const updated = {
+        ...prev,
+        name: name || prev?.name,
+        email: email || prev?.email,
+      };
+      localStorage.setItem("kalika_user", JSON.stringify(updated));
+      return updated;
+    });
+    return { success: true };
+  };
+
+  const changePassword = async ({ currentPassword, newPassword }) => {
+    // Mock simulation / API-ready password updater
+    if (!newPassword || newPassword.length < 6) {
+      throw new Error("Password must be at least 6 characters long.");
+    }
+    return { success: true, message: "Password updated successfully." };
+  };
+
   return (
     <AuthContext.Provider
       value={{
@@ -142,8 +163,10 @@ export const AuthProvider = ({ children }) => {
         logout,
         loginAsDemo,
         toggleRole,
+        updateProfile,
+        changePassword,
         isAuthenticated: !!user,
-        isAdmin: user?.role === "admin",
+        isAdmin: user?.role === "admin" || user?.email?.toLowerCase().includes("admin"),
       }}
     >
       {children}

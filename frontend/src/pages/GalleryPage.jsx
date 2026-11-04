@@ -7,18 +7,22 @@ import {
   ChevronRight,
 } from "lucide-react";
 import { HOTEL_GALLERY, HOTEL_INFO } from "../utils/initialData";
+import { useBooking } from "../context/BookingContext";
 import Button from "../components/common/Button";
 
 export const GalleryPage = () => {
+  const { gallery = HOTEL_GALLERY, hotelInfo = HOTEL_INFO } = useBooking();
   const [activeCategory, setActiveCategory] = useState("All");
   const [selectedImageIndex, setSelectedImageIndex] = useState(null);
 
   const categories = ["All", "Rooms", "Dining", "Exterior", "Facilities"];
 
+  const currentGalleryList = gallery && gallery.length > 0 ? gallery : HOTEL_GALLERY;
+
   const filteredImages = useMemo(() => {
-    if (activeCategory === "All") return HOTEL_GALLERY;
-    return HOTEL_GALLERY.filter((item) => item.category === activeCategory);
-  }, [activeCategory]);
+    if (activeCategory === "All") return currentGalleryList;
+    return currentGalleryList.filter((item) => item.category === activeCategory);
+  }, [activeCategory, currentGalleryList]);
 
   const openLightbox = (index) => {
     setSelectedImageIndex(index);
