@@ -51,6 +51,49 @@ export const RoomDetailsPage = () => {
     });
   }, [bookings, room, stayDates]);
 
+  // Calculate availability for selected dates, decoupling current operational status from future dates
+  const isCurrentlyAvailable = useMemo(() => {
+    if (!room) return false;
+
+    const today = new Date().toISOString().split("T")[0];
+    const { checkIn, checkOut } = stayDates;
+
+    // When no dates are selected, room must be currently available
+    if (!checkIn || !checkOut) {
+      return room.status === "available";
+    }
+
+    // Check-out must be strictly after check-in
+    if (checkOut <= checkIn) {
+      return false;
+    }
+
+    // If stay starts today or earlier, verify room is not occupied, cleaning, or in maintenance
+    if (checkIn <= today) {
+      if (room.status === "occupied" || room.status === "cleaning" || room.status === "maintenance") {
+        return false;
+      }
+    }
+
+    // Check maintenance schedule
+    if (room.status === "maintenance") {
+      const start = room.maintenanceStartDate || today;
+      const end = room.maintenanceEndDate;
+      if (end) {
+        if (start < checkOut && end > checkIn) {
+          return false;
+        }
+      } else {
+        if (start < checkOut) {
+          return false;
+        }
+      }
+    }
+
+    // Check for conflicting active bookings
+    return !isRoomBookedForDates;
+  }, [room, stayDates, isRoomBookedForDates]);
+
   if (!room) {
     return (
       <div className="pt-32 pb-20 text-center max-w-md mx-auto px-4">
@@ -68,7 +111,6 @@ export const RoomDetailsPage = () => {
   }
 
   const images = room.images && room.images.length > 0 ? room.images : ["/images/room1.jpeg"];
-  const isCurrentlyAvailable = room.status === "available" && !isRoomBookedForDates;
 
   const estimatedRoomTotal = room.pricePerNight * nights;
   const estimatedVat = Math.round((estimatedRoomTotal * HOTEL_INFO.vatRate) / 100);

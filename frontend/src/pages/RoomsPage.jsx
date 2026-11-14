@@ -45,12 +45,49 @@ export const RoomsPage = () => {
   // Check if a room is free for the chosen date range
   const isRoomFree = useCallback(
     (room) => {
-      if (room.status !== "available") return false;
+      if (!room) return false;
+
+      const today = new Date().toISOString().split("T")[0];
+
+      // If no dates are selected, room is only available if current operational status is available
+      if (!checkIn || !checkOut) {
+        return room.status === "available";
+      }
+
+      // Check-out must be strictly after check-in
+      if (checkOut <= checkIn) {
+        return false;
+      }
+
+      // If stay begins today or earlier, verify room is not occupied, cleaning, or in maintenance
+      if (checkIn <= today) {
+        if (room.status === "occupied" || room.status === "cleaning" || room.status === "maintenance") {
+          return false;
+        }
+      }
+
+      // Check maintenance schedule
+      if (room.status === "maintenance") {
+        const start = room.maintenanceStartDate || today;
+        const end = room.maintenanceEndDate;
+        if (end) {
+          if (start < checkOut && end > checkIn) {
+            return false;
+          }
+        } else {
+          if (start < checkOut) {
+            return false;
+          }
+        }
+      }
+
+      // Check existing active bookings for date overlap
       const hasConflict = bookings.some((b) => {
         if (b.status === "cancelled" || b.status === "checked_out") return false;
         if (b.roomId !== room.id && b.roomNumber !== room.roomNumber) return false;
         return b.checkInDate < checkOut && b.checkOutDate > checkIn;
       });
+
       return !hasConflict;
     },
     [bookings, checkIn, checkOut]
